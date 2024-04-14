@@ -7,49 +7,43 @@ import java.io.FileNotFoundException;
 
 class ArquivoTextoLeitura {
 
-	public BufferedReader entrada;
-	
-	ArquivoTextoLeitura(String nomeArquivo) {	
-		
-		try {
-			entrada = new BufferedReader(new FileReader(nomeArquivo));
-		}
-		catch (FileNotFoundException excecao) {
-			System.out.println("Arquivo nao encontrado");
-		}
-	}
-	
-	public void fecharArquivo() {
-		
-		try {
-			entrada.close();
-		}
-		catch (IOException excecao) {
-			System.out.println("Erro no fechamento do arquivo de leitura: " + excecao);	
-		}
-	}
-	
-	@SuppressWarnings("finally")
-	public String ler() {
-		
-		String textoEntrada = null;
-		
-		try {
-			textoEntrada = entrada.readLine();
-		}
-		catch (EOFException excecao) { //Excecao de final de arquivo.
-			textoEntrada = null;
-		}
-		catch (IOException excecao) {
-			System.out.println("Erro de leitura: " + excecao);
-			textoEntrada = null;
-		}
-		finally {
-			return textoEntrada;
-		}
-	}
-}
+    public BufferedReader entrada;
 
+    ArquivoTextoLeitura(String nomeArquivo) {
+
+        try {
+            entrada = new BufferedReader(new FileReader(nomeArquivo));
+        } catch (FileNotFoundException excecao) {
+            System.out.println("Arquivo nao encontrado");
+        }
+    }
+
+    public void fecharArquivo() {
+
+        try {
+            entrada.close();
+        } catch (IOException excecao) {
+            System.out.println("Erro no fechamento do arquivo de leitura: " + excecao);
+        }
+    }
+
+    @SuppressWarnings("finally")
+    public String ler() {
+
+        String textoEntrada = null;
+
+        try {
+            textoEntrada = entrada.readLine();
+        } catch (EOFException excecao) { // Excecao de final de arquivo.
+            textoEntrada = null;
+        } catch (IOException excecao) {
+            System.out.println("Erro de leitura: " + excecao);
+            textoEntrada = null;
+        } finally {
+            return textoEntrada;
+        }
+    }
+}
 
 class Jogo {
     private int rank;
@@ -63,7 +57,8 @@ class Jogo {
     private double JP_Vendas;
     private double Outras_Vendas;
     private double Vendas_Global;
-    
+    private static int comparacoes = 0;
+    private static int movimentos = 0;
 
     public Jogo(int rank, String nomeJogo, String plataforma, int ano, String genero, String editora, double NA_Vendas,
             double EU_Vendas, double JP_Vendas, double Outras_Vendas, double Vendas_Global) {
@@ -198,7 +193,7 @@ class Jogo {
 
     }
 
-        public void lerIN(String Dados) {
+    public void lerIN(String Dados) {
         String[] dados = Dados.split(";");
         this.nomeJogo = dados[0];
         this.ano = Integer.parseInt(dados[1]);
@@ -210,100 +205,190 @@ class Jogo {
         System.out.println(this);
     }
 
-
-    public String toString(int maisVendido) {
-
-        return nomeJogo + " " + plataforma + " " + Vendas_Global + " " + rank + ". " + genero ". "+ editora +  ". Mais vendido: " + maisVendido + ". ";
+    public String toString(String maisVendido) {
+        return "[" + nomeJogo + "] [" + plataforma + "] [" + Vendas_Global + "] " + rank + ". " + genero + ". "
+                + editora
+                + ". Mais vendido: " + maisVendido + ".";
     }
 
-        String maiorNome(String x, String y){
-        if(x > y){
-            return x;
-        } else{
-            return y;
+    public int compararBubble(Jogo jogo) {
+        comparacoes++;
+        if (this.nomeJogo.compareTo(jogo.nomeJogo) != 0) {
+            return this.nomeJogo.compareTo(jogo.nomeJogo);
+        } else if (this.plataforma.compareTo(jogo.plataforma) != 0) {
+            return this.plataforma.compareTo(jogo.plataforma);
+        } else {
+            movimentos++; 
+            return Double.compare(jogo.Vendas_Global, this.Vendas_Global);
         }
     }
-
-    String maiorPlataforma(String x, String y){
-        if(x > y){
-            return x;
-        } else{
-            return y;
+    
+    public int compararSelecao(Jogo jogo) {
+        comparacoes++;
+        if (this.nomeJogo.compareTo(jogo.nomeJogo) != 0) {
+            return this.nomeJogo.compareTo(jogo.nomeJogo);
+        } else if (this.plataforma.compareTo(jogo.plataforma) != 0) {
+            return this.plataforma.compareTo(jogo.plataforma);
+        } else {
+            movimentos++; 
+            return Double.compare(this.Vendas_Global, jogo.Vendas_Global);
         }
     }
-
-    Double maiorVendas(Double a, Double b, Double c, Double d, Double f){
-        if(x < y){
-            return x;
-        } else{
-            return y;
+    
+    public int compararInsercao(Jogo jogo) {
+        comparacoes++;
+        if (this.nomeJogo.compareTo(jogo.nomeJogo) != 0) {
+            return this.nomeJogo.compareTo(jogo.nomeJogo);
+        } else if (this.plataforma.compareTo(jogo.plataforma) != 0) {
+            return this.plataforma.compareTo(jogo.plataforma);
+        } else {
+            movimentos++; 
+            return Double.compare(jogo.Vendas_Global, this.Vendas_Global);
         }
     }
+    
+
+    public static int getComparacao() {
+        return comparacoes;
+    }
+
+    public static int getMovementos() {
+        return movimentos;
+    }
+
 }
 
-public class lista5Leitura {
+class Ordenacao {
+
+    public static String maiorVenda(Double NA_Vendas, Double EU_Vendas, Double JP_Vendas) {
+        if (NA_Vendas > EU_Vendas && NA_Vendas > JP_Vendas) {
+            return "NA_Vendas";
+        } else if (EU_Vendas > NA_Vendas && EU_Vendas > JP_Vendas) {
+            return "EU_Vendas";
+        } else {
+            return "JP_Vendas";
+        }
+
+    }
+
+    public static void bubble(ArrayList<Jogo> vetor) {
+        int n = vetor.size();
+        boolean swapped;
+        for (int i = 0; i < n - 1; i++) {
+            swapped = false;
+            for (int j = 0; j < n - i - 1; j++) {
+
+                if (vetor.get(j).compararBubble(vetor.get(j + 1)) > 0) {
+                    // trocar
+                    Jogo temp = vetor.get(j);
+                    vetor.set(j, vetor.get(j + 1));
+                    vetor.set(j + 1, temp);
+                    swapped = true;
+                }
+            }
+            if (!swapped)
+                break;
+        }
+    }
+
+    public static void selecao(ArrayList<Jogo> vetor) {
+        int n = vetor.size();
+        for (int i = 0; i < n - 1; i++) {
+            int minIndice = i;
+            for (int j = i + 1; j < n; j++) {
+                // comparar
+                if (vetor.get(j).compararSelecao(vetor.get(minIndice)) < 0) {
+                    minIndice = j;
+                }
+            }
+            // trocar
+            Jogo temp = vetor.get(minIndice);
+            vetor.set(minIndice, vetor.get(i));
+            vetor.set(i, temp);
+        }
+    }
+
+    public static void insercao(ArrayList<Jogo> vetor) {
+        int n = vetor.size();
+        for (int i = 1; i < n; ++i) {
+            Jogo key = vetor.get(i);
+            int j = i - 1;
+            while (j >= 0 && vetor.get(j).compararInsercao(key) > 0) {
+                vetor.set(j + 1, vetor.get(j));
+                j = j - 1;
+            }
+            vetor.set(j + 1, key);
+        }
+    }
+
+    public static void printarOrdenacao(ArrayList<Jogo> vetor, String tipoOrdenacao) {
+
+        for (Jogo jogo : vetor) {
+            jogo.toString(maiorVenda(jogo.getNA_Vendas(), jogo.getEU_Vendas(), jogo.getJP_Vendas()));
+            MyIO.println();
+        }
+
+        MyIO.println("## " + tipoOrdenacao + " [COMPARACOES] [" + (Jogo.getComparacao() / 1000) + "k] [MOVIMENTACOES] ["
+                + (Jogo.getMovementos() / 1000) + "k]");
+    }
+
+}
+
+public class lista6 {
+
     public static void main(String[] args) {
 
-        int qtdInputEncontrado= 0;
-        int comparacao= 0;
-        int movimentacao = 0 ;
-
-    //ler jogos.txt
+        // ler jogos.txt
         ArrayList<Jogo> jogosTxt = new ArrayList<>();
         ArquivoTextoLeitura txt = new ArquivoTextoLeitura("/tmp/jogos.txt");
         String linha = txt.ler();
         while (linha != null) {
 
             Jogo jogo = new Jogo();
-            jogo.ler(linha);
+            jogo.lerTxt(linha);
             jogosTxt.add(jogo);
             linha = txt.ler();
         }
 
-    // ler input
-        ArrayList<Jogo> jogosVetorIN = new ArrayList<>();
-            linha = MyIO.readLine();
-            while (!linha.equals("FIM")) {
+        ArrayList<Jogo> cloneBubble = new ArrayList<>(jogosTxt);
+        ArrayList<Jogo> cloneSelecao = new ArrayList<>(jogosTxt);
+        ArrayList<Jogo> cloneinsercao = new ArrayList<>(jogosTxt);
+
+        Ordenacao.bubble(cloneBubble);
+        Ordenacao.selecao(cloneSelecao);
+        Ordenacao.insercao(cloneinsercao);
+
+        // ler input pub.in
+        ArrayList<Jogo> jogosPubIn = new ArrayList<>();
+        linha = MyIO.readLine();
+
+        while (!linha.equals("FIM")) {
             Jogo jogoIN = new Jogo();
-            jogoIN.lerTxt(linha);
-            jogosInVetor.add(jogoIN);
+            jogoIN.lerIN(linha);
+            jogosPubIn.add(jogoIN);
             linha = MyIO.readLine();
+        }
 
-//incrementar entradas semelhantes
-         ArrayList<Jogo> nomeOrdenado = new ArrayList<>();
-         ArrayList<Jogo> plataformaOrdenada = new ArrayList<>();
-         ArrayList<Jogo> VendasOrdenadas = new ArrayList<>();
-
-         ArrayList<Jogo> ordenacao = new ArrayList<>();
-
-
-            for(jogo JogoIN : jogosVetorIN){
-                for(jogo Jogo : jogosTxt){
-
-
-            if (JogoIN.getNomeDoJogo().equals(Jogo.getNomeDoJogo()) 
-            && JogoIN.getAno() == Jogo.ano 
-            && JogoIN.getEditora().equals(Jogo.getEditora())
-            && JogosIN.getPlataforma().equals(Jogo.getPlataforma())) {
-                     qtdInputEncontrado++;
+        // incrementar entradas semelhantes
+        int totalJogosEncontrados = 0;
+        for (Jogo jogoPubIn : jogosPubIn) {
+            for (Jogo jogoTxt : jogosTxt) {
+                if (jogoPubIn.getNomeDoJogo().equals(jogoTxt.getNomeDoJogo())
+                        && jogoPubIn.getAno() == jogoTxt.getAno()
+                        && jogoPubIn.getEditora().equals(jogoTxt.getEditora())
+                        && jogoPubIn.getPlataforma().equals(jogoTxt.getPlataforma())) {
+                    totalJogosEncontrados++;
                 }
-              }
             }
+        }
 
-            int i=0;
-            for(jogo JogoIN : jogosVetorIN){
-                  Jogo ordenacao = new Jogo();
-                  ordenacao.nomeDoJogo = maiorNome(JogoIN[i] ,JogoIN[i++])
-                  ordenacao.plataforma = maiorPlataforma(JogoIN[i] ,JogoIN[i++])
-                  ordenacao.maiorVendas = maiorVendas(JogoIN[i] ,JogoIN[i++])
-            }
+        MyIO.println("Quantidade de jogos encontrados: " + totalJogosEncontrados);
 
+        // printar jogos
+        Ordenacao.printarOrdenacao(cloneBubble, "BUBBLE");
+        Ordenacao.printarOrdenacao(cloneinsercao, "INSERTION");
+        Ordenacao.printarOrdenacao(cloneSelecao, "SELECTION");
 
-
-
-            }
-
-        MyIO.println("## {nome _metodo } [COMPARACOES ] [{num _comparacoes }] [MOVIMENTACOES ] [{num _movimentacoes }]");
     }
 
 }
