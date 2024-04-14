@@ -211,6 +211,9 @@ class Jogo {
                 + ". Mais vendido: " + maisVendido + ".";
     }
 
+
+
+
     public int compararBubble(Jogo jogo) {
         comparacoes++;
         if (this.nomeJogo.compareTo(jogo.nomeJogo) != 0) {
@@ -255,22 +258,11 @@ class Jogo {
     public static int getMovementos() {
         return movimentos;
     }
+    
 
 }
 
 class Ordenacao {
-
-    public static String maiorVenda(Double NA_Vendas, Double EU_Vendas, Double JP_Vendas) {
-        if (NA_Vendas > EU_Vendas && NA_Vendas > JP_Vendas) {
-            return "NA_Vendas";
-        } else if (EU_Vendas > NA_Vendas && EU_Vendas > JP_Vendas) {
-            return "EU_Vendas";
-        } else {
-            return "JP_Vendas";
-        }
-
-    }
-
     public static void bubble(ArrayList<Jogo> vetor) {
         int n = vetor.size();
         boolean swapped;
@@ -320,23 +312,24 @@ class Ordenacao {
             vetor.set(j + 1, key);
         }
     }
-
-    public static void printarOrdenacao(ArrayList<Jogo> vetor, String tipoOrdenacao) {
-
-        for (Jogo jogo : vetor) {
-            jogo.toString(maiorVenda(jogo.getNA_Vendas(), jogo.getEU_Vendas(), jogo.getJP_Vendas()));
-            MyIO.println();
-        }
-
-        MyIO.println("## " + tipoOrdenacao + " [COMPARACOES] [" + (Jogo.getComparacao() / 1000) + "k] [MOVIMENTACOES] ["
-                + (Jogo.getMovementos() / 1000) + "k]");
-    }
-
 }
 
 public class lista6 {
 
+    public static String maiorVenda(Double NA_Vendas, Double EU_Vendas, Double JP_Vendas) {
+        if (NA_Vendas > EU_Vendas && NA_Vendas > JP_Vendas) {
+            return "NA_Vendas";
+        } else if (EU_Vendas > NA_Vendas && EU_Vendas > JP_Vendas) {
+            return "EU_Vendas";
+        } else {
+            return "JP_Vendas";
+        }
+
+    }
+
     public static void main(String[] args) {
+
+        int totalJogosEncontrados = 0;
 
         // ler jogos.txt
         ArrayList<Jogo> jogosTxt = new ArrayList<>();
@@ -350,45 +343,65 @@ public class lista6 {
             linha = txt.ler();
         }
 
-        ArrayList<Jogo> cloneBubble = new ArrayList<>(jogosTxt);
-        ArrayList<Jogo> cloneSelecao = new ArrayList<>(jogosTxt);
-        ArrayList<Jogo> cloneinsercao = new ArrayList<>(jogosTxt);
+
+        // ler input pub.in
+        ArrayList<Jogo> encontrados = new ArrayList<>();
+
+        linha = MyIO.readLine();
+        while (!linha.equals("FIM")) {
+            Jogo jogoIN = new Jogo();
+            jogoIN.lerIN(linha);
+
+            for (Jogo jogoTxt : jogosTxt) {
+                if (jogoIN.getNomeDoJogo().equals(jogoTxt.getNomeDoJogo())
+                        && jogoIN.getAno() == jogoTxt.getAno()
+                        && jogoIN.getEditora().equals(jogoTxt.getEditora())
+                        && jogoIN.getPlataforma().equals(jogoTxt.getPlataforma())) {
+                    totalJogosEncontrados++;
+                    encontrados.add(jogoIN);
+                        break;
+                }
+            }
+            linha = MyIO.readLine();
+        }
+
+
+        ArrayList<Jogo> cloneBubble = new ArrayList<>(encontrados);
+        ArrayList<Jogo> cloneSelecao = new ArrayList<>(encontrados);
+        ArrayList<Jogo> cloneinsercao = new ArrayList<>(encontrados);
 
         Ordenacao.bubble(cloneBubble);
         Ordenacao.selecao(cloneSelecao);
         Ordenacao.insercao(cloneinsercao);
 
-        // ler input pub.in
-        ArrayList<Jogo> jogosPubIn = new ArrayList<>();
-        linha = MyIO.readLine();
-
-        while (!linha.equals("FIM")) {
-            Jogo jogoIN = new Jogo();
-            jogoIN.lerIN(linha);
-            jogosPubIn.add(jogoIN);
-            linha = MyIO.readLine();
-        }
-
-        // incrementar entradas semelhantes
-        int totalJogosEncontrados = 0;
-        for (Jogo jogoPubIn : jogosPubIn) {
-            for (Jogo jogoTxt : jogosTxt) {
-                if (jogoPubIn.getNomeDoJogo().equals(jogoTxt.getNomeDoJogo())
-                        && jogoPubIn.getAno() == jogoTxt.getAno()
-                        && jogoPubIn.getEditora().equals(jogoTxt.getEditora())
-                        && jogoPubIn.getPlataforma().equals(jogoTxt.getPlataforma())) {
-                    totalJogosEncontrados++;
-                }
-            }
-        }
 
         MyIO.println("Quantidade de jogos encontrados: " + totalJogosEncontrados);
 
         // printar jogos
-        Ordenacao.printarOrdenacao(cloneBubble, "BUBBLE");
-        Ordenacao.printarOrdenacao(cloneinsercao, "INSERTION");
-        Ordenacao.printarOrdenacao(cloneSelecao, "SELECTION");
+
+        MyIO.println("## " + "BUBBLE" + " [COMPARACOES] [" + (Jogo.getComparacao() / 1000) + "k] [MOVIMENTACOES] ["
+        + (Jogo.getMovementos() / 1000) + "k]");
+        for(Jogo jogo : cloneBubble){
+            jogo.toString(maiorVenda(jogo.getNA_Vendas(), jogo.getEU_Vendas(), jogo.getJP_Vendas()));
+            MyIO.println();
+        }
+
+        MyIO.println("## " + "INSERTION" + " [COMPARACOES] [" + (Jogo.getComparacao() / 1000) + "k] [MOVIMENTACOES] ["
+        + (Jogo.getMovementos() / 1000) + "k]");
+        for(Jogo jogo : cloneSelecao){
+            jogo.toString(maiorVenda(jogo.getNA_Vendas(), jogo.getEU_Vendas(), jogo.getJP_Vendas()));
+            MyIO.println();
+        }
+
+        MyIO.println("## " + "SELECTION" + " [COMPARACOES] [" + (Jogo.getComparacao() / 1000) + "k] [MOVIMENTACOES] ["
+        + (Jogo.getMovementos() / 1000) + "k]");
+        for(Jogo jogo : cloneinsercao){
+            jogo.toString(maiorVenda(jogo.getNA_Vendas(), jogo.getEU_Vendas(), jogo.getJP_Vendas()));
+            MyIO.println();
+        }
 
     }
+
+ 
 
 }
